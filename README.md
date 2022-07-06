@@ -2,8 +2,8 @@
 
 Assumes macos host.
 
-[Reference Golang Version](https://github.com/alediaferia/gogoa)
+[Reference](https://github.com/nimgl/glfw)
 
 ```shell script
-nim c -f -r application.nim
+nim c -r application.nim
 ```

@@ -1,21 +1,24 @@
-{.passL: "-framework Cocoa".}
-{.compile: "o_application.m", passc: "-x objective-c"}
-{.compile: "o_window.m", passc: "-x objective-c"}
+import glfw
 
-const
-  app_header = "o_application.h"
-  window_header = "o_window.h"
+proc keyProc(window: GLFWWindow, key: int32, scancode: int32, action: int32, mods: int32): void {.cdecl.} =
+  if key == GLFWKey.Escape and action == GLFWPress:
+    window.setWindowShouldClose(true)
 
-proc sharedApplication(): pointer {.header: app_header, importc: "SharedApplication", nodecl.}
-proc run(app: pointer): void {.header: app_header, importc: "Run", nodecl.}
-proc newWindow(x, y, width, height: int): pointer {.header: window_header, importc: "NewWindow", nodecl.}
-proc setTitle(window: pointer, title: cstring): void {.header: window_header, importc: "SetTitle", nodecl.}
-proc makeKeyAndOrderFront(window: pointer): void {.header: window_header, importc: "MakeKeyAndOrderFront", nodecl.}
+proc main() =
+  assert glfwInit()
 
+  let w: GLFWWindow = glfwCreateWindow(800, 600)
+  if w == nil:
+    quit(-1)
 
-when isMainModule:
-  let app = sharedApplication()
-  let window = newWindow(0, 0, 200, 200)
-  setTitle(window, "test")
-  makeKeyAndOrderFront(window)
-  run(app)
+  discard w.setKeyCallback(keyProc)
+  w.makeContextCurrent()
+
+  while not w.windowShouldClose:
+    glfwPollEvents()
+    w.swapBuffers()
+
+  w.destroyWindow()
+  glfwTerminate()
+
+main()
